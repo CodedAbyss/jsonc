@@ -262,7 +262,7 @@ FAIL: return ctx.index = save, false;
 
 bool json_end() {
     char c = (ctx.bitset & 1) ? ']' : '}';
-    if(ctx.state & READ && ctx.text[ctx.index] != c) return false;
+    if((ctx.state & READ) && ctx.text[ctx.index] != c) return false;
     ctx.depth--;
     ctx.bitset >>= 1;
     if(ctx.state & READ) {
