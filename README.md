@@ -13,7 +13,7 @@ main.c:
 #include <stdio.h>
 int main(int argc, char **argv) {
     char field[64], value[64];
-    if(!json_read("test.json")) return printf("failed to read test.json"), 0;
+    if(!json_read_file("test.json")) return printf("failed to read test.json"), 0;
     json_obj_iter(field, 64) {
         int id;
         if(!strcmp(field, "id")) {
@@ -29,4 +29,5 @@ int main(int argc, char **argv) {
 
     }
     json_end();
+    json_reset();
 }
