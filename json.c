@@ -10,11 +10,12 @@ enum {
     WRITE = 2,
     FIELD = 4,
     NOTEMPTY = 8,
+    OWNS_TEXT = 16
 };
 
 static struct json_ctx {
-    i32 state;
-    i32 depth;
+    u16 state;
+    u16 depth;
     i32 index;
     u64 bitset; // depth max 64
     union {
@@ -23,7 +24,8 @@ static struct json_ctx {
     };
 } ctx = { 0 };
 
-void json_read(char *str) {
+bool json_read(char *str) {
+    if(ctx.state != 0) return false;
     ctx.text = str;
     ctx.index = 0;
     ctx.state = READ;
@@ -44,13 +46,13 @@ bool json_read_file(char *path) {
     fread(ctx.text, 1, len, fp);
     ctx.text[len] = 0;
     ctx.index = 0;
-    ctx.state = READ;
+    ctx.state = READ | OWNS_TEXT;
     ctx.depth = 1;
     return true;
 }
 
 void json_reset() {
-    if(ctx.state & READ) free(ctx.text);
+    if(ctx.state & OWNS_TEXT) free(ctx.text);
     else if(ctx.state & WRITE) fclose(ctx.fp);
     memset(&ctx, 0, sizeof(ctx));
 }
